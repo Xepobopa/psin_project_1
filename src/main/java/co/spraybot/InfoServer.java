@@ -5,13 +5,21 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class InfoServer {
     public static void main(String[] args) {
+
+        ExecutorService es = new ExecutorService.new;
+        es.execute(new BroadcastTask());
+
         File fileToSend = new File(Const.FILE_PATH);
         String fileName = fileToSend.getName();
         long fileSize = fileToSend.length();
         String fileMetadataInfo = fileName + "\n" + fileSize;
+
+        Interval partsToSend = Interval.empty(0, fileSize);
 
         try (DatagramSocket infoSocket = new DatagramSocket(Const.SERVER_PORT)) {
             System.out.println("Start server...");
